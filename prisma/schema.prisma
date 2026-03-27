@@ -8,29 +8,32 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("farmer")
-  createdAt DateTime @default(now())
-  listings  Listing[]
-  bookings  Booking[]
-  reviews   Review[]
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String    @unique
+  password         String
+  role             String    @default("farmer")
+  createdAt        DateTime  @default(now())
+  listings         Listing[]
+  bookings         Booking[]
+  reviews          Review[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Listing {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
   description String
   price       Float
   category    String
-  available   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  owner       User     @relation(fields: [ownerId], references: [id])
+  available   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  owner       User      @relation(fields: [ownerId], references: [id])
   ownerId     Int
   bookings    Booking[]
   reviews     Review[]
+  messages    Message[]
 }
 
 model Booking {
@@ -54,4 +57,16 @@ model Review {
   userId    Int
   listing   Listing  @relation(fields: [listingId], references: [id])
   listingId Int
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId Int
+  listing    Listing  @relation(fields: [listingId], references: [id])
+  listingId  Int
 }
