@@ -9,8 +9,9 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-6">
           <a href="/listings" className="text-gray-600 hover:text-green-700 font-medium">Browse</a>
-          <a href="/listings/new" className="text-gray-600 hover:text-green-700 font-medium">List Resource</a>
-          <a href="/login" className="text-gray-600 hover:text-green-700 font-medium">Login</a>
+<a href="/about" className="text-gray-600 hover:text-green-700 font-medium">About</a>
+<a href="/contact" className="text-gray-600 hover:text-green-700 font-medium">Contact</a>
+<a href="/login" className="text-gray-600 hover:text-green-700 font-medium">Login</a>
           <a href="/register" className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 font-medium">
             Get Started
           </a>
