@@ -17,7 +17,7 @@ export default function Contact() {
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
           <span className="text-3xl">🌱</span>
-          <h1 className="text-2xl font-bold text-green-700">AgriShare</h1>
+         <a href="/" className="text-2xl font-bold text-green-700">AgriShare</a>
         </div>
         <div className="flex items-center gap-6">
           <a href="/" className="text-gray-600 hover:text-green-700 font-medium">Home</a>
