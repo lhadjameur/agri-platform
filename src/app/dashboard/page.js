@@ -72,11 +72,12 @@ export default function Dashboard() {
           <span className="text-xl font-bold text-green-700">AgriShare</span>
         </a>
         <div className="flex items-center gap-4">
-          <a href="/listings" className="text-gray-600 hover:text-green-700 text-sm font-medium">Browse</a>
-          <a href="/listings/new" className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 text-sm font-medium">
-            + Add Listing
-          </a>
-        </div>
+  <a href="/listings" className="text-gray-600 hover:text-green-700 text-sm font-medium">Browse</a>
+  <a href="/profile" className="text-gray-600 hover:text-green-700 text-sm font-medium">My Profile</a>
+  <a href="/listings/new" className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 text-sm font-medium">
+    + Add Listing
+  </a>
+</div>
       </nav>
 
       <div className="max-w-6xl mx-auto px-8 py-10">
