@@ -6,6 +6,7 @@ export default function ListingDetail() {
   const { id } = useParams()
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [activeImage, setActiveImage] = useState(0)
   const [booking, setBooking] = useState({ startDate: '', endDate: '' })
   const [message, setMessage] = useState('')
   const [bookingMsg, setBookingMsg] = useState('')
@@ -62,6 +63,12 @@ export default function ListingDetail() {
   if (loading) return <p className="p-8 text-gray-500">Loading...</p>
   if (!listing) return <p className="p-8 text-red-500">Listing not found.</p>
 
+  const allImages = listing.images && listing.images.length > 0
+    ? listing.images
+    : listing.imageUrl
+    ? [listing.imageUrl]
+    : []
+
   return (
     <main className="min-h-screen bg-green-50">
       <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
@@ -69,13 +76,44 @@ export default function ListingDetail() {
         <a href="/listings" className="text-green-600 hover:underline">← Back to Listings</a>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-8 py-12 flex flex-col gap-8">
+      <div className="max-w-5xl mx-auto px-8 py-12 flex flex-col gap-8">
+
+        {/* Photo Gallery */}
+        {allImages.length > 0 && (
+          <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <img
+              src={allImages[activeImage]}
+              alt={listing.title}
+              className="w-full h-96 object-cover"
+            />
+            {allImages.length > 1 && (
+              <div className="flex gap-3 p-4">
+                {allImages.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    alt={`Photo ${i + 1}`}
+                    onClick={() => setActiveImage(i)}
+                    className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 transition ${
+                      activeImage === i ? 'border-green-500' : 'border-transparent'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Listing Info */}
         <div className="bg-white rounded-2xl shadow p-8">
-          <span className="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full">
-            {listing.category}
-          </span>
+          <div className="flex justify-between items-start">
+            <span className="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full">
+              {listing.category}
+            </span>
+            {listing.location && (
+              <span className="text-gray-400 text-sm">📍 {listing.location}</span>
+            )}
+          </div>
           <h2 className="text-3xl font-bold text-gray-800 mt-4 mb-3">{listing.title}</h2>
           <p className="text-gray-500 mb-6">{listing.description}</p>
           <div className="border-t pt-4 flex justify-between items-center">

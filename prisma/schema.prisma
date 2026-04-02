@@ -28,6 +28,9 @@ model Listing {
   price       Float
   category    String
   available   Boolean   @default(true)
+  imageUrl    String?
+  images      String[]
+  location    String?
   createdAt   DateTime  @default(now())
   owner       User      @relation(fields: [ownerId], references: [id])
   ownerId     Int
