@@ -18,7 +18,7 @@ export default function Login() {
     })
     const data = await res.json()
     if (res.ok) {
-      router.push('/listings')
+      router.push('/dashboard')
     } else {
       setError(data.error || 'Something went wrong')
     }

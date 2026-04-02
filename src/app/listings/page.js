@@ -32,9 +32,12 @@ export default function Listings() {
     <main className="min-h-screen bg-green-50">
       <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
         <a href="/" className="text-2xl font-bold text-green-700">🌱 AgriShare</a>
-        <a href="/listings/new" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          + Add Listing
-        </a>
+        <div className="flex items-center gap-4">
+          <a href="/dashboard" className="text-gray-600 hover:text-green-700 font-medium">My Dashboard</a>
+          <a href="/listings/new" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            + Add Listing
+          </a>
+        </div>
       </nav>
 
       <div className="max-w-6xl mx-auto px-8 py-12">
