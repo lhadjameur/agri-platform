@@ -11,6 +11,9 @@ export default function ListingDetail() {
   const [message, setMessage] = useState('')
   const [bookingMsg, setBookingMsg] = useState('')
   const [messageMsg, setMessageMsg] = useState('')
+  const [reviews, setReviews] = useState([])
+  const [review, setReview] = useState({ rating: 0, comment: '' })
+  const [reviewMsg, setReviewMsg] = useState('')
 
   useEffect(() => {
     fetch(`/api/listings/${id}`)
@@ -19,6 +22,10 @@ export default function ListingDetail() {
         setListing(data)
         setLoading(false)
       })
+
+    fetch(`/api/reviews?listingId=${id}`)
+      .then(res => res.json())
+      .then(data => setReviews(Array.isArray(data) ? data : []))
   }, [id])
 
   const handleBooking = async (e) => {
@@ -60,6 +67,33 @@ export default function ListingDetail() {
     }
   }
 
+  const handleReview = async (e) => {
+    e.preventDefault()
+    if (review.rating === 0) {
+      setReviewMsg('❌ Please select a star rating!')
+      return
+    }
+    const res = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rating: review.rating,
+        comment: review.comment,
+        userId: 1,
+        listingId: parseInt(id)
+      })
+    })
+    if (res.ok) {
+      setReviewMsg('✅ Review submitted successfully!')
+      setReview({ rating: 0, comment: '' })
+      fetch(`/api/reviews?listingId=${id}`)
+        .then(res => res.json())
+        .then(data => setReviews(Array.isArray(data) ? data : []))
+    } else {
+      setReviewMsg('❌ Something went wrong. Please try again.')
+    }
+  }
+
   if (loading) return <p className="p-8 text-gray-500">Loading...</p>
   if (!listing) return <p className="p-8 text-red-500">Listing not found.</p>
 
@@ -68,6 +102,10 @@ export default function ListingDetail() {
     : listing.imageUrl
     ? [listing.imageUrl]
     : []
+
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : null
 
   return (
     <main className="min-h-screen bg-green-50">
@@ -117,7 +155,12 @@ export default function ListingDetail() {
           <h2 className="text-3xl font-bold text-gray-800 mt-4 mb-3">{listing.title}</h2>
           <p className="text-gray-500 mb-6">{listing.description}</p>
           <div className="border-t pt-4 flex justify-between items-center">
-            <p className="text-2xl font-bold text-green-700">${listing.price}/day</p>
+            <div>
+              <p className="text-2xl font-bold text-green-700">${listing.price}/day</p>
+              {avgRating && (
+                <p className="text-yellow-500 mt-1">⭐ {avgRating} ({reviews.length} reviews)</p>
+              )}
+            </div>
             <div className="text-right">
               <p className="text-gray-700 font-semibold">👤 {listing.owner?.name}</p>
               <p className="text-gray-400 text-sm">{listing.owner?.email}</p>
@@ -191,6 +234,72 @@ export default function ListingDetail() {
               </button>
             </form>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="bg-white rounded-2xl shadow p-8">
+          <h3 className="text-xl font-bold text-gray-800 mb-6">⭐ Reviews & Ratings</h3>
+
+          <form onSubmit={handleReview} className="bg-gray-50 rounded-xl p-6 mb-8">
+            <h4 className="font-bold text-gray-700 mb-4">Write a Review</h4>
+            {reviewMsg && (
+              <p className={`p-3 rounded mb-4 ${reviewMsg.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                {reviewMsg}
+              </p>
+            )}
+            <div className="mb-4">
+              <label className="text-sm text-gray-600 mb-2 block">Rating</label>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReview({...review, rating: star})}
+                    className="text-4xl transition hover:scale-110 focus:outline-none"
+                  >
+                    {star <= review.rating ? '⭐' : '☆'}
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-400 mt-1">
+                {review.rating > 0 ? `You selected ${review.rating} star${review.rating > 1 ? 's' : ''}` : 'Click to select a rating'}
+              </p>
+            </div>
+            <textarea
+              placeholder="Share your experience with this resource..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 h-24 mb-4"
+              value={review.comment}
+              onChange={e => setReview({...review, comment: e.target.value})}
+              required
+            />
+            <button
+              type="submit"
+              className="bg-yellow-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-yellow-600"
+            >
+              Submit Review
+            </button>
+          </form>
+
+          {reviews.length === 0 ? (
+            <p className="text-gray-400 text-center py-8">No reviews yet. Be the first to review!</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {reviews.map(r => (
+                <div key={r.id} className="border-b pb-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-semibold text-gray-800">{r.user?.name}</p>
+                      <p className="text-yellow-400 text-xl">{'⭐'.repeat(r.rating)}</p>
+                    </div>
+                    <p className="text-gray-400 text-sm">
+                      {new Date(r.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <p className="text-gray-600">{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>
