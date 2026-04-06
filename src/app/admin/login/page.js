@@ -73,7 +73,7 @@ export default function Login() {
           Don't have an account?{' '}
           <a href="/register" className="text-green-600 hover:underline">Register</a>
         </p>
-        <p className="text-center mt-3">
+        <p className="text-center text-gray-500 mt-3">
           <a href="/admin/login" className="text-gray-400 text-sm hover:underline">Admin access →</a>
         </p>
       </div>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 
 export default function Dashboard() {
+  const [user, setUser] = useState(null)
   const [listings, setListings] = useState([])
   const [bookings, setBookings] = useState([])
   const [messages, setMessages] = useState([])
@@ -12,6 +13,11 @@ export default function Dashboard() {
   const [replyMsg, setReplyMsg] = useState('')
 
   useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    }
+
     Promise.all([
       fetch('/api/dashboard/listings').then(r => r.json()),
       fetch('/api/dashboard/bookings').then(r => r.json()),
@@ -72,12 +78,12 @@ export default function Dashboard() {
           <span className="text-xl font-bold text-green-700">AgriShare</span>
         </a>
         <div className="flex items-center gap-4">
-  <a href="/listings" className="text-gray-600 hover:text-green-700 text-sm font-medium">Browse</a>
-  <a href="/profile" className="text-gray-600 hover:text-green-700 text-sm font-medium">My Profile</a>
-  <a href="/listings/new" className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 text-sm font-medium">
-    + Add Listing
-  </a>
-</div>
+          <a href="/listings" className="text-gray-600 hover:text-green-700 text-sm font-medium">Browse</a>
+          <a href="/profile" className="text-gray-600 hover:text-green-700 text-sm font-medium">My Profile</a>
+          <a href="/listings/new" className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 text-sm font-medium">
+            + Add Listing
+          </a>
+        </div>
       </nav>
 
       <div className="max-w-6xl mx-auto px-8 py-10">
@@ -87,8 +93,8 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 text-9xl opacity-10 select-none">🌾</div>
           <div className="absolute bottom-0 left-64 text-7xl opacity-10 select-none">🚜</div>
           <p className="text-green-200 text-sm mb-2">{today}</p>
-          <h2 className="text-4xl font-bold mb-1">Welcome back, Test Farmer! 👋</h2>
-          <p className="text-green-100 mb-8">Here's what's happening on your farm today</p>
+          <h2 className="text-4xl font-bold mb-1">Welcome back, {user?.name || 'Farmer'}! 👋</h2>
+          <p className="text-green-100 mb-8">Here is your AgriShare activity overview</p>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-green-800 rounded-2xl p-5">
@@ -315,8 +321,6 @@ export default function Dashboard() {
                       <p className="text-gray-400 text-sm">{new Date(msg.createdAt).toLocaleDateString()}</p>
                     </div>
                     <p className="text-gray-600 bg-gray-50 rounded-xl p-4 mb-4">{msg.content}</p>
-
-                    {/* Reply Section */}
                     {replyTo === msg.id ? (
                       <div className="mt-3">
                         {replyMsg && (
