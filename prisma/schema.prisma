@@ -14,13 +14,14 @@ model User {
   password         String
   role             String    @default("farmer")
   createdAt        DateTime  @default(now())
+  resetToken       String?
+  resetTokenExpiry DateTime?
   listings         Listing[]
   bookings         Booking[]
   reviews          Review[]
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
 }
-
 model Listing {
   id          Int       @id @default(autoincrement())
   title       String

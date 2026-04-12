@@ -1,17 +1,30 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Profile() {
   const [form, setForm] = useState({
-    name: 'Test Farmer',
-    email: 'test@agri.com',
+    name: '',
+    email: '',
     role: 'farmer',
-    location: 'Warsaw, Poland',
+    location: '',
     phone: '',
     bio: ''
   })
   const [saved, setSaved] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      const user = JSON.parse(savedUser)
+      setForm(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || '',
+        role: user.role || 'farmer',
+      }))
+    }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -21,7 +34,6 @@ export default function Profile() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <a href="/" className="flex items-center gap-2">
           <span className="text-2xl">🌱</span>
@@ -42,8 +54,8 @@ export default function Profile() {
               👨‍🌾
             </div>
             <div>
-              <h2 className="text-3xl font-bold">{form.name}</h2>
-              <p className="text-green-100 mt-1">{form.email}</p>
+              <h2 className="text-3xl font-bold">{form.name || 'Your Name'}</h2>
+              <p className="text-green-100 mt-1">{form.email || 'your@email.com'}</p>
               <div className="flex items-center gap-3 mt-3">
                 <span className="bg-green-900 text-green-200 px-4 py-1 rounded-full text-sm capitalize font-medium">
                   {form.role}

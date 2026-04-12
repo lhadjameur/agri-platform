@@ -61,6 +61,11 @@ export default function Login() {
               required
             />
           </div>
+          <div className="flex justify-end">
+            <a href="/forgot-password" className="text-sm text-green-600 hover:underline">
+              Forgot Password?
+            </a>
+          </div>
           <button
             type="submit"
             disabled={loading}
@@ -69,6 +74,7 @@ export default function Login() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
         <p className="text-center text-gray-500 mt-6">
           Don't have an account?{' '}
           <a href="/register" className="text-green-600 hover:underline">Register</a>
