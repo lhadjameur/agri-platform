@@ -18,7 +18,13 @@ export default function Register() {
     })
     const data = await res.json()
     if (res.ok) {
-      router.push('/login')
+      localStorage.setItem('pendingEmail', form.email)
+      localStorage.setItem('pendingRegistration', JSON.stringify({
+        name: form.name,
+        password: form.password,
+        role: form.role
+      }))
+      router.push('/verify')
     } else {
       setError(data.error || 'Something went wrong')
     }
@@ -83,7 +89,7 @@ export default function Register() {
             disabled={loading}
             className="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50"
           >
-            {loading ? 'Creating account...' : 'Register'}
+            {loading ? 'Sending verification code...' : 'Create Account'}
           </button>
         </form>
         <p className="text-center text-gray-500 mt-6">

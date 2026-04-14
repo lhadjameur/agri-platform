@@ -14,6 +14,9 @@ model User {
   password         String
   role             String    @default("farmer")
   createdAt        DateTime  @default(now())
+  isVerified       Boolean   @default(false)
+  verificationPin  String?
+  pinExpiry        DateTime?
   resetToken       String?
   resetTokenExpiry DateTime?
   listings         Listing[]
