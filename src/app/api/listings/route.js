@@ -31,7 +31,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json()
-    const { title, description, price, category, ownerId, imageUrl, images, location } = body
+    const { title, description, price, currency, pricePeriod, category, ownerId, imageUrl, images, location } = body
 
     if (!title || !description || !price || !category || !ownerId) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
@@ -42,6 +42,8 @@ export async function POST(req) {
         title,
         description,
         price: parseFloat(price),
+        currency: currency || 'USD',
+        pricePeriod: pricePeriod || 'day',
         category,
         ownerId: parseInt(ownerId),
         imageUrl: imageUrl || null,
