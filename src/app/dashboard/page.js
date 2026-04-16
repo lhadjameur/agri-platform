@@ -208,7 +208,10 @@ export default function Dashboard() {
                         <p className="font-medium text-gray-800">{listing.title}</p>
                         <p className="text-gray-400 text-sm">{listing.category}</p>
                       </div>
-                      <span className="text-green-600 font-bold">${listing.price}/day</span>
+                      <span className="text-green-600 font-bold">
+  {listing.currency === 'EUR' ? '€' : listing.currency === 'PLN' ? 'zł' : '$'}
+  {listing.price}/{listing.pricePeriod || 'day'}
+</span>
                     </div>
                   ))}
                 </div>
@@ -299,7 +302,10 @@ export default function Dashboard() {
                       </div>
                       <h4 className="font-bold text-gray-800 mt-2">{listing.title}</h4>
                       <div className="flex justify-between items-center mt-3">
-                        <span className="text-green-600 font-bold">${listing.price}/day</span>
+                        <span className="text-green-600 font-bold">
+  {listing.currency === 'EUR' ? '€' : listing.currency === 'PLN' ? 'zł' : '$'}
+  {listing.price}/{listing.pricePeriod || 'day'}
+</span>
                         <a href={`/listings/${listing.id}`} className="text-green-600 text-sm hover:underline font-medium">View Details →</a>
                       </div>
                     </div>

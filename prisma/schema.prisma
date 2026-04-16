@@ -26,21 +26,23 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
 }
 model Listing {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String
-  price       Float
-  category    String
-  available   Boolean   @default(true)
-  imageUrl    String?
-  images      String[]
-  location    String?
-  createdAt   DateTime  @default(now())
-  owner       User      @relation(fields: [ownerId], references: [id])
-  ownerId     Int
-  bookings    Booking[]
-  reviews     Review[]
-  messages    Message[]
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String
+  price        Float
+  currency     String    @default("USD")
+  pricePeriod  String    @default("day")
+  category     String
+  location     String?
+  imageUrl     String?
+  images       String[]
+  available    Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  ownerId      Int
+  owner        User      @relation(fields: [ownerId], references: [id])
+  bookings     Booking[]
+  reviews      Review[]
+  messages     Message[]
 }
 
 model Booking {

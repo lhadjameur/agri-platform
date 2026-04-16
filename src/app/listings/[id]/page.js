@@ -174,7 +174,10 @@ export default function ListingDetail() {
           <p className="text-gray-500 mb-6">{listing.description}</p>
           <div className="border-t pt-4 flex justify-between items-center">
             <div>
-              <p className="text-2xl font-bold text-green-700">${listing.price}/day</p>
+              <p className="text-2xl font-bold text-green-700">
+  {listing.currency === 'EUR' ? '€' : listing.currency === 'PLN' ? 'zł' : '$'}
+  {listing.price}/{listing.pricePeriod || 'day'}
+</p>
               {avgRating && (
                 <p className="text-yellow-500 mt-1">⭐ {avgRating} ({reviews.length} reviews)</p>
               )}

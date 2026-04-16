@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function NewListing() {
@@ -8,6 +8,8 @@ export default function NewListing() {
     title: '',
     description: '',
     price: '',
+    currency: 'USD',
+    pricePeriod: 'day',
     category: 'Equipment',
     location: ''
   })
@@ -15,11 +17,25 @@ export default function NewListing() {
   const [previews, setPreviews] = useState([])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser))
+    }
+  }, [])
 
   const handleImages = (e) => {
     const files = Array.from(e.target.files).slice(0, 4)
     setImages(files)
     setPreviews(files.map(file => URL.createObjectURL(file)))
+  }
+
+  const getCurrencySymbol = (currency) => {
+    if (currency === 'EUR') return '€'
+    if (currency === 'PLN') return 'zł'
+    return '$'
   }
 
   const handleSubmit = async (e) => {
@@ -45,7 +61,7 @@ export default function NewListing() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          ownerId: 1,
+          ownerId: currentUser ? Number(currentUser.id) : 1,
           imageUrl: uploadedUrls[0] || null,
           images: uploadedUrls
         })
@@ -157,16 +173,40 @@ export default function NewListing() {
             />
           </div>
 
+          {/* Price, Currency and Period */}
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Price per day ($)</label>
-            <input
-              type="number"
-              placeholder="e.g. 50"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-              value={form.price}
-              onChange={e => setForm({...form, price: e.target.value})}
-              required
-            />
+            <label className="text-sm text-gray-600 mb-1 block">Price</label>
+            <div className="grid grid-cols-3 gap-3">
+              <input
+                type="number"
+                placeholder="e.g. 50"
+                className="col-span-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                value={form.price}
+                onChange={e => setForm({...form, price: e.target.value})}
+                required
+              />
+              <select
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                value={form.currency}
+                onChange={e => setForm({...form, currency: e.target.value})}
+              >
+                <option value="USD">$ USD</option>
+                <option value="EUR">€ EUR</option>
+                <option value="PLN">zł PLN</option>
+              </select>
+              <select
+                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                value={form.pricePeriod}
+                onChange={e => setForm({...form, pricePeriod: e.target.value})}
+              >
+                <option value="day">Per Day</option>
+                <option value="month">Per Month</option>
+                <option value="year">Per Year</option>
+              </select>
+            </div>
+            <p className="text-gray-400 text-xs mt-2">
+              Preview: {getCurrencySymbol(form.currency)}{form.price || '0'} / {form.pricePeriod}
+            </p>
           </div>
 
           <button

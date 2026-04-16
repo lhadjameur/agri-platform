@@ -111,7 +111,10 @@ export default function Listings() {
                 <h3 className="text-xl font-bold text-gray-800 mt-3 mb-2">{listing.title}</h3>
                 <p className="text-gray-500 text-sm mb-4 line-clamp-2">{listing.description}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-green-700 font-bold text-lg">${listing.price}/day</span>
+                  <span className="text-green-700 font-bold text-lg">
+  {listing.currency === 'EUR' ? '€' : listing.currency === 'PLN' ? 'zł' : '$'}
+  {listing.price}/{listing.pricePeriod || 'day'}
+</span>
                   <a href={`/listings/${listing.id}`} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
                     View Details
                   </a>
