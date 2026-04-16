@@ -14,8 +14,14 @@ export default function ListingDetail() {
   const [reviews, setReviews] = useState([])
   const [review, setReview] = useState({ rating: 0, comment: '' })
   const [reviewMsg, setReviewMsg] = useState('')
+  const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser))
+    }
+
     fetch(`/api/listings/${id}`)
       .then(res => res.json())
       .then(data => {
@@ -30,12 +36,16 @@ export default function ListingDetail() {
 
   const handleBooking = async (e) => {
     e.preventDefault()
+    if (!currentUser) {
+      setBookingMsg('❌ Please login to book this resource.')
+      return
+    }
     const res = await fetch('/api/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         listingId: parseInt(id),
-        userId: 1,
+        userId: Number(currentUser.id),
         startDate: booking.startDate,
         endDate: booking.endDate
       })
@@ -49,12 +59,16 @@ export default function ListingDetail() {
 
   const handleMessage = async (e) => {
     e.preventDefault()
+    if (!currentUser) {
+      setMessageMsg('❌ Please login to send a message.')
+      return
+    }
     const res = await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: message,
-        senderId: 1,
+        senderId: Number(currentUser.id),
         receiverId: listing.ownerId,
         listingId: parseInt(id)
       })
@@ -69,6 +83,10 @@ export default function ListingDetail() {
 
   const handleReview = async (e) => {
     e.preventDefault()
+    if (!currentUser) {
+      setReviewMsg('❌ Please login to submit a review.')
+      return
+    }
     if (review.rating === 0) {
       setReviewMsg('❌ Please select a star rating!')
       return
@@ -79,7 +97,7 @@ export default function ListingDetail() {
       body: JSON.stringify({
         rating: review.rating,
         comment: review.comment,
-        userId: 1,
+        userId: Number(currentUser.id),
         listingId: parseInt(id)
       })
     })
@@ -177,34 +195,41 @@ export default function ListingDetail() {
                 {bookingMsg}
               </p>
             )}
-            <form onSubmit={handleBooking} className="flex flex-col gap-4">
-              <div>
-                <label className="text-sm text-gray-600 mb-1 block">Start Date</label>
-                <input
-                  type="date"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  value={booking.startDate}
-                  onChange={e => setBooking({...booking, startDate: e.target.value})}
-                  required
-                />
+            {!currentUser ? (
+              <div className="text-center py-6">
+                <p className="text-gray-500 mb-4">Please login to book this resource</p>
+                <a href="/login" className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Login</a>
               </div>
-              <div>
-                <label className="text-sm text-gray-600 mb-1 block">End Date</label>
-                <input
-                  type="date"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  value={booking.endDate}
-                  onChange={e => setBooking({...booking, endDate: e.target.value})}
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
-              >
-                Request Booking
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={handleBooking} className="flex flex-col gap-4">
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">Start Date</label>
+                  <input
+                    type="date"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    value={booking.startDate}
+                    onChange={e => setBooking({...booking, startDate: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">End Date</label>
+                  <input
+                    type="date"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    value={booking.endDate}
+                    onChange={e => setBooking({...booking, endDate: e.target.value})}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
+                >
+                  Request Booking
+                </button>
+              </form>
+            )}
           </div>
 
           {/* Message Form */}
@@ -215,24 +240,31 @@ export default function ListingDetail() {
                 {messageMsg}
               </p>
             )}
-            <form onSubmit={handleMessage} className="flex flex-col gap-4">
-              <div>
-                <label className="text-sm text-gray-600 mb-1 block">Your Message</label>
-                <textarea
-                  placeholder="Ask about availability, price, or any details..."
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 h-32"
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                  required
-                />
+            {!currentUser ? (
+              <div className="text-center py-6">
+                <p className="text-gray-500 mb-4">Please login to contact the owner</p>
+                <a href="/login" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Login</a>
               </div>
-              <button
-                type="submit"
-                className="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
-              >
-                Send Message
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={handleMessage} className="flex flex-col gap-4">
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">Your Message</label>
+                  <textarea
+                    placeholder="Ask about availability, price, or any details..."
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 h-32"
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
+                >
+                  Send Message
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
@@ -240,45 +272,52 @@ export default function ListingDetail() {
         <div className="bg-white rounded-2xl shadow p-8">
           <h3 className="text-xl font-bold text-gray-800 mb-6">⭐ Reviews & Ratings</h3>
 
-          <form onSubmit={handleReview} className="bg-gray-50 rounded-xl p-6 mb-8">
-            <h4 className="font-bold text-gray-700 mb-4">Write a Review</h4>
-            {reviewMsg && (
-              <p className={`p-3 rounded mb-4 ${reviewMsg.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                {reviewMsg}
-              </p>
-            )}
-            <div className="mb-4">
-              <label className="text-sm text-gray-600 mb-2 block">Rating</label>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setReview({...review, rating: star})}
-                    className="text-4xl transition hover:scale-110 focus:outline-none"
-                  >
-                    {star <= review.rating ? '⭐' : '☆'}
-                  </button>
-                ))}
-              </div>
-              <p className="text-sm text-gray-400 mt-1">
-                {review.rating > 0 ? `You selected ${review.rating} star${review.rating > 1 ? 's' : ''}` : 'Click to select a rating'}
-              </p>
+          {!currentUser ? (
+            <div className="text-center py-6 bg-gray-50 rounded-xl mb-8">
+              <p className="text-gray-500 mb-4">Please login to write a review</p>
+              <a href="/login" className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600">Login</a>
             </div>
-            <textarea
-              placeholder="Share your experience with this resource..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 h-24 mb-4"
-              value={review.comment}
-              onChange={e => setReview({...review, comment: e.target.value})}
-              required
-            />
-            <button
-              type="submit"
-              className="bg-yellow-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-yellow-600"
-            >
-              Submit Review
-            </button>
-          </form>
+          ) : (
+            <form onSubmit={handleReview} className="bg-gray-50 rounded-xl p-6 mb-8">
+              <h4 className="font-bold text-gray-700 mb-4">Write a Review</h4>
+              {reviewMsg && (
+                <p className={`p-3 rounded mb-4 ${reviewMsg.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                  {reviewMsg}
+                </p>
+              )}
+              <div className="mb-4">
+                <label className="text-sm text-gray-600 mb-2 block">Rating</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReview({...review, rating: star})}
+                      className="text-4xl transition hover:scale-110 focus:outline-none"
+                    >
+                      {star <= review.rating ? '⭐' : '☆'}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-400 mt-1">
+                  {review.rating > 0 ? `You selected ${review.rating} star${review.rating > 1 ? 's' : ''}` : 'Click to select a rating'}
+                </p>
+              </div>
+              <textarea
+                placeholder="Share your experience with this resource..."
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 h-24 mb-4"
+                value={review.comment}
+                onChange={e => setReview({...review, comment: e.target.value})}
+                required
+              />
+              <button
+                type="submit"
+                className="bg-yellow-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-yellow-600"
+              >
+                Submit Review
+              </button>
+            </form>
+          )}
 
           {reviews.length === 0 ? (
             <p className="text-gray-400 text-center py-8">No reviews yet. Be the first to review!</p>

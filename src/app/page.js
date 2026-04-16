@@ -40,24 +40,51 @@ export default function Home() {
               </a>
             </div>
           </div>
+
+          {/* 4 Boxes */}
           <div className="bg-white rounded-3xl shadow-xl p-8">
             <div className="grid grid-cols-2 gap-4">
+
               <div className="bg-green-50 rounded-2xl p-6 text-center">
-                <p className="text-4xl font-bold text-green-600">500+</p>
-                <p className="text-gray-600 mt-1">Active Farmers</p>
+                <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p className="font-bold text-gray-800 text-sm">Cut Equipment Costs</p>
+                <p className="text-gray-500 text-xs mt-2">Stop buying, start sharing</p>
               </div>
+
               <div className="bg-blue-50 rounded-2xl p-6 text-center">
-                <p className="text-4xl font-bold text-blue-600">200+</p>
-                <p className="text-gray-600 mt-1">Listings</p>
+                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <p className="font-bold text-gray-800 text-sm">Save Time</p>
+                <p className="text-gray-500 text-xs mt-2">Find resources instantly</p>
               </div>
+
               <div className="bg-yellow-50 rounded-2xl p-6 text-center">
-                <p className="text-4xl font-bold text-yellow-600">50+</p>
-                <p className="text-gray-600 mt-1">Regions</p>
+                <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <p className="font-bold text-gray-800 text-sm">Grow Together</p>
+                <p className="text-gray-500 text-xs mt-2">Increase productivity</p>
               </div>
+
               <div className="bg-purple-50 rounded-2xl p-6 text-center">
-                <p className="text-4xl font-bold text-purple-600">98%</p>
-                <p className="text-gray-600 mt-1">Satisfaction</p>
+                <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <p className="font-bold text-gray-800 text-sm">Build Community</p>
+                <p className="text-gray-500 text-xs mt-2">Connect with farmers</p>
               </div>
+
             </div>
           </div>
         </div>

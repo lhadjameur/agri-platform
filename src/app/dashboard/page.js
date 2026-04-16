@@ -8,9 +8,10 @@ export default function Dashboard() {
   const [messages, setMessages] = useState([])
   const [activeTab, setActiveTab] = useState('overview')
   const [loading, setLoading] = useState(true)
-  const [replyTo, setReplyTo] = useState(null)
+  const [activeConversation, setActiveConversation] = useState(null)
   const [replyContent, setReplyContent] = useState('')
   const [replyMsg, setReplyMsg] = useState('')
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user')
@@ -21,7 +22,7 @@ export default function Dashboard() {
     Promise.all([
       fetch('/api/dashboard/listings').then(r => r.json()),
       fetch('/api/dashboard/bookings').then(r => r.json()),
-      fetch('/api/messages?userId=1').then(r => r.json()),
+      fetch('/api/messages').then(r => r.json()),
     ]).then(([listingsData, bookingsData, messagesData]) => {
       setListings(Array.isArray(listingsData) ? listingsData : [])
       setBookings(Array.isArray(bookingsData) ? bookingsData : [])
@@ -30,24 +31,58 @@ export default function Dashboard() {
     })
   }, [])
 
-  const handleReply = async (msg) => {
+  const getConversations = () => {
+    if (!user) return []
+    const userId = Number(user.id)
+    const convMap = {}
+    messages.forEach(msg => {
+      const otherUser = msg.senderId === userId ? msg.receiver : msg.sender
+      if (!otherUser) return
+      const key = `${otherUser.id}-${msg.listing?.id}`
+      if (!convMap[key]) {
+        convMap[key] = {
+          key,
+          otherUser,
+          listing: msg.listing,
+          messages: [],
+          lastMessage: msg,
+          lastDate: msg.createdAt
+        }
+      }
+      convMap[key].messages.push(msg)
+      if (new Date(msg.createdAt) > new Date(convMap[key].lastDate)) {
+        convMap[key].lastMessage = msg
+        convMap[key].lastDate = msg.createdAt
+      }
+    })
+    return Object.values(convMap).sort((a, b) =>
+      new Date(b.lastDate) - new Date(a.lastDate)
+    )
+  }
+
+  const handleSendReply = async () => {
+    if (!replyContent.trim() || !activeConversation) return
+    setSending(true)
     const res = await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: replyContent,
-        senderId: 1,
-        receiverId: msg.senderId === 1 ? msg.receiverId : msg.senderId,
-        listingId: msg.listingId
+        senderId: Number(user.id),
+        receiverId: activeConversation.otherUser.id,
+        listingId: activeConversation.listing?.id
       })
     })
     if (res.ok) {
-      setReplyMsg('✅ Reply sent!')
+      const newMsg = await res.json()
+      setMessages(prev => [newMsg, ...prev])
       setReplyContent('')
-      setReplyTo(null)
+      setReplyMsg('✅ Message sent!')
+      setTimeout(() => setReplyMsg(''), 3000)
     } else {
       setReplyMsg('❌ Something went wrong.')
     }
+    setSending(false)
   }
 
   if (loading) return (
@@ -69,6 +104,19 @@ export default function Dashboard() {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   })
+
+  const conversations = getConversations()
+
+  const getConversationMessages = () => {
+    if (!activeConversation || !user) return []
+    const userId = Number(user.id)
+    const listingId = activeConversation.listing?.id
+    return messages.filter(msg =>
+      msg.listing?.id === listingId &&
+      ((msg.senderId === userId && msg.receiverId === activeConversation.otherUser.id) ||
+      (msg.receiverId === userId && msg.senderId === activeConversation.otherUser.id))
+    ).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -108,9 +156,9 @@ export default function Dashboard() {
               <p className="text-green-300 text-xs mt-1">Total bookings</p>
             </div>
             <div className="bg-green-800 rounded-2xl p-5">
-              <p className="text-green-300 text-sm mb-1">💬 Messages</p>
-              <p className="text-4xl font-bold text-white">{messages.length}</p>
-              <p className="text-green-300 text-xs mt-1">Conversations</p>
+              <p className="text-green-300 text-sm mb-1">💬 Conversations</p>
+              <p className="text-4xl font-bold text-white">{conversations.length}</p>
+              <p className="text-green-300 text-xs mt-1">Active conversations</p>
             </div>
           </div>
         </div>
@@ -120,7 +168,7 @@ export default function Dashboard() {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => { setActiveTab(tab.id); setActiveConversation(null) }}
               className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-green-600 text-white shadow-md'
@@ -300,67 +348,142 @@ export default function Dashboard() {
 
         {/* Messages Tab */}
         {activeTab === 'messages' && (
-          <div className="bg-white rounded-2xl shadow-sm p-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Messages ({messages.length})</h3>
-            {messages.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-5xl mb-4">💬</p>
-                <p className="text-gray-400">No messages yet</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {messages.map(msg => (
-                  <div key={msg.id} className="border rounded-2xl p-6 hover:shadow-sm transition">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <p className="font-bold text-gray-800">
-                          {msg.senderId === 1 ? `✉️ To: ${msg.receiver?.name}` : `📩 From: ${msg.sender?.name}`}
-                        </p>
-                        <p className="text-gray-400 text-sm">Re: {msg.listing?.title}</p>
-                      </div>
-                      <p className="text-gray-400 text-sm">{new Date(msg.createdAt).toLocaleDateString()}</p>
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="flex h-[600px]">
+
+              {/* Conversations List */}
+              <div className="w-80 border-r flex flex-col">
+                <div className="p-6 border-b">
+                  <h3 className="text-xl font-bold text-gray-800">Messages</h3>
+                  <p className="text-gray-400 text-sm mt-1">{conversations.length} conversations</p>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  {conversations.length === 0 ? (
+                    <div className="text-center py-12 px-6">
+                      <p className="text-4xl mb-3">💬</p>
+                      <p className="text-gray-400 text-sm">No conversations yet</p>
                     </div>
-                    <p className="text-gray-600 bg-gray-50 rounded-xl p-4 mb-4">{msg.content}</p>
-                    {replyTo === msg.id ? (
-                      <div className="mt-3">
-                        {replyMsg && (
-                          <p className={`p-2 rounded mb-2 text-sm ${replyMsg.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                            {replyMsg}
-                          </p>
-                        )}
-                        <textarea
-                          placeholder="Write your reply..."
-                          className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 h-24 mb-3"
+                  ) : (
+                    conversations.map(conv => (
+                      <button
+                        key={conv.key}
+                        onClick={() => { setActiveConversation(conv); setReplyMsg('') }}
+                        className={`w-full text-left p-4 border-b hover:bg-gray-50 transition ${
+                          activeConversation?.key === conv.key ? 'bg-green-50 border-l-4 border-l-green-600' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold flex-shrink-0">
+                            {conv.otherUser?.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-center">
+                              <p className="font-semibold text-gray-800 text-sm truncate">{conv.otherUser?.name}</p>
+                              <p className="text-gray-400 text-xs flex-shrink-0 ml-2">
+                                {new Date(conv.lastDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <p className="text-gray-400 text-xs truncate mt-1">Re: {conv.listing?.title}</p>
+                            <p className="text-gray-500 text-xs truncate mt-1">{conv.lastMessage?.content}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Chat Window */}
+              <div className="flex-1 flex flex-col">
+                {!activeConversation ? (
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-6xl mb-4">💬</p>
+                      <p className="text-gray-400 text-lg font-medium">Select a conversation</p>
+                      <p className="text-gray-300 text-sm mt-2">Choose a conversation from the left to start chatting</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Chat Header */}
+                    <div className="p-4 border-b flex items-center gap-4 bg-white">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold">
+                        {activeConversation.otherUser?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-800">{activeConversation.otherUser?.name}</p>
+                        <p className="text-gray-400 text-sm">Re: {activeConversation.listing?.title}</p>
+                      </div>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-gray-50">
+                      {getConversationMessages().map(msg => {
+                        const isMe = msg.senderId === Number(user.id)
+                        return (
+                          <div key={msg.id} className={`flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                            {!isMe && (
+                              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold text-xs flex-shrink-0">
+                                {activeConversation.otherUser?.name?.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                            <div className={`max-w-xs lg:max-w-md ${isMe ? 'items-end' : 'items-start'} flex flex-col`}>
+                              {!isMe && (
+                                <p className="text-xs text-gray-400 mb-1 ml-1">{activeConversation.otherUser?.name}</p>
+                              )}
+                              <div className={`px-4 py-3 rounded-2xl ${
+                                isMe
+                                  ? 'bg-green-600 text-white rounded-br-none'
+                                  : 'bg-white text-gray-800 rounded-bl-none shadow-sm'
+                              }`}>
+                                <p className="text-sm">{msg.content}</p>
+                                <p className={`text-xs mt-1 ${isMe ? 'text-green-200' : 'text-gray-400'}`}>
+                                  {new Date(msg.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            {isMe && (
+                              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                {user?.name?.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Reply Box */}
+                    <div className="p-4 border-t bg-white">
+                      {replyMsg && (
+                        <p className={`text-sm mb-2 px-3 py-2 rounded-lg ${replyMsg.includes('✅') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                          {replyMsg}
+                        </p>
+                      )}
+                      <div className="flex gap-3 items-center">
+                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                          {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Write a message..."
+                          className="flex-1 border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
                           value={replyContent}
                           onChange={e => setReplyContent(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleSendReply()}
                         />
-                        <div className="flex gap-3">
-                          <button
-                            onClick={() => handleReply(msg)}
-                            className="bg-green-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-green-700 font-medium"
-                          >
-                            Send Reply
-                          </button>
-                          <button
-                            onClick={() => { setReplyTo(null); setReplyContent(''); setReplyMsg('') }}
-                            className="bg-gray-100 text-gray-600 px-5 py-2 rounded-lg text-sm hover:bg-gray-200 font-medium"
-                          >
-                            Cancel
-                          </button>
-                        </div>
+                        <button
+                          onClick={handleSendReply}
+                          disabled={sending || !replyContent.trim()}
+                          className="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 disabled:opacity-50 font-medium text-sm"
+                        >
+                          {sending ? '...' : 'Send'}
+                        </button>
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => { setReplyTo(msg.id); setReplyMsg('') }}
-                        className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-100 font-medium"
-                      >
-                        ↩️ Reply
-                      </button>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
