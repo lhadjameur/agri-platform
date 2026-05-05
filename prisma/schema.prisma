@@ -36,6 +36,7 @@ model Listing {
   location     String?
   imageUrl     String?
   images       String[]
+  tags         String[]
   available    Boolean   @default(true)
   createdAt    DateTime  @default(now())
   ownerId      Int
@@ -44,7 +45,6 @@ model Listing {
   reviews      Review[]
   messages     Message[]
 }
-
 model Booking {
   id        Int      @id @default(autoincrement())
   startDate DateTime

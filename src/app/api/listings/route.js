@@ -9,11 +9,13 @@ export async function GET(req) {
     const category = searchParams.get('category')
     const location = searchParams.get('location')
     const search = searchParams.get('search')
+    const tag = searchParams.get('tag')
 
     const where = { available: true }
     if (category && category !== '') where.category = category
     if (location && location !== '') where.location = { contains: location, mode: 'insensitive' }
     if (search && search !== '') where.title = { contains: search, mode: 'insensitive' }
+    if (tag && tag !== '') where.tags = { has: tag }
 
     const listings = await prisma.listing.findMany({
       where,
@@ -31,7 +33,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json()
-    const { title, description, price, currency, pricePeriod, category, ownerId, imageUrl, images, location } = body
+    const { title, description, price, currency, pricePeriod, category, ownerId, imageUrl, images, location, tags } = body
 
     if (!title || !description || !price || !category || !ownerId) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
@@ -48,7 +50,8 @@ export async function POST(req) {
         ownerId: parseInt(ownerId),
         imageUrl: imageUrl || null,
         images: images || [],
-        location: location || null
+        location: location || null,
+        tags: tags || []
       }
     })
 

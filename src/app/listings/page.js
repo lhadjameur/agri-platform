@@ -1,33 +1,53 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Leaf, MagnifyingGlass, MapPin, Plus, SquaresFour, Spinner } from '@phosphor-icons/react'
+import { useSearchParams } from 'next/navigation'
+import { Leaf, MagnifyingGlass, MapPin, Plus, SquaresFour, Spinner, Tag, X } from '@phosphor-icons/react'
 
 export default function Listings() {
+  const searchParams = useSearchParams()
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [location, setLocation] = useState('')
+  const [selectedTag, setSelectedTag] = useState('')
+  const [allTags, setAllTags] = useState([])
 
-  const fetchListings = () => {
+  const fetchListings = (tagFilter) => {
     setLoading(true)
     const params = new URLSearchParams()
     if (search) params.append('search', search)
     if (category) params.append('category', category)
     if (location) params.append('location', location)
+    if (tagFilter) params.append('tag', tagFilter)
 
-    fetch(`/api/listings?${params.toString()}`)
+    fetch('/api/listings?' + params.toString())
       .then(res => res.json())
       .then(data => {
-        setListings(Array.isArray(data) ? data : [])
+        const result = Array.isArray(data) ? data : []
+        setListings(result)
+        const tags = [...new Set(result.flatMap(l => l.tags || []))]
+        setAllTags(tags)
         setLoading(false)
       })
       .catch(() => setLoading(false))
   }
 
   useEffect(() => {
-    fetchListings()
-  }, [])
+    const tagFromUrl = searchParams.get('tag') || ''
+    setSelectedTag(tagFromUrl)
+    fetchListings(tagFromUrl)
+  }, [searchParams])
+
+  const handleTagClick = (tag) => {
+    if (selectedTag === tag) {
+      setSelectedTag('')
+      fetchListings('')
+    } else {
+      setSelectedTag(tag)
+      fetchListings(tag)
+    }
+  }
 
   const getCurrencySymbol = (currency) => {
     if (currency === 'EUR') return '€'
@@ -45,7 +65,7 @@ export default function Listings() {
           <span className="text-xl font-bold text-gray-900">Agrivia</span>
         </a>
         <div className="flex items-center gap-4">
-          <a href="/dashboard" className="text-gray-600 hover:text-gray-900 font-medium text-sm">My Dashboard</a>
+          <a href="/dashboard" className="text-gray-500 hover:text-gray-900 font-medium text-sm">My Dashboard</a>
           <a href="/listings/new" className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 text-sm font-medium flex items-center gap-2 transition">
             <Plus size={16} weight="bold" />
             Add Listing
@@ -62,7 +82,7 @@ export default function Listings() {
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8 flex gap-3">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6 flex gap-3">
           <div className="flex-1 flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2">
             <MagnifyingGlass size={18} className="text-gray-400" />
             <input
@@ -71,7 +91,7 @@ export default function Listings() {
               className="flex-1 focus:outline-none text-sm text-gray-700 placeholder-gray-400"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && fetchListings()}
+              onKeyDown={e => e.key === 'Enter' && fetchListings(selectedTag)}
             />
           </div>
           <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2">
@@ -99,12 +119,54 @@ export default function Listings() {
             />
           </div>
           <button
-            onClick={fetchListings}
+            onClick={() => fetchListings(selectedTag)}
             className="bg-green-600 text-white rounded-xl px-6 py-2 hover:bg-green-700 font-medium text-sm transition"
           >
             Search
           </button>
         </div>
+
+        {/* Tag Cloud */}
+        {allTags.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Tag size={16} className="text-gray-400" />
+              <p className="text-sm font-medium text-gray-500">Filter by tag:</p>
+              {selectedTag && (
+                <button
+                  onClick={() => handleTagClick(selectedTag)}
+                  className="flex items-center gap-1 text-xs text-red-500 hover:underline"
+                >
+                  <X size={12} /> Clear filter
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {allTags.map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => handleTagClick(tag)}
+                  className={'px-3 py-1.5 rounded-full text-xs font-medium transition ' + (selectedTag === tag ? 'bg-green-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400 hover:text-green-600')}
+                >
+                  {'#' + tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Active tag indicator */}
+        {selectedTag && (
+          <div className="mb-4 flex items-center gap-2">
+            <p className="text-sm text-gray-500">Showing results for:</p>
+            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+              {'#' + selectedTag}
+              <button onClick={() => handleTagClick(selectedTag)}>
+                <X size={12} />
+              </button>
+            </span>
+          </div>
+        )}
 
         {/* Loading */}
         {loading && (
@@ -151,13 +213,34 @@ export default function Listings() {
                   )}
                 </div>
                 <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-1">{listing.title}</h3>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">{listing.description}</p>
+                <p className="text-gray-400 text-sm mb-3 line-clamp-2">{listing.description}</p>
+
+                {/* Tags */}
+                {listing.tags && listing.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {listing.tags.slice(0, 3).map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagClick(tag)}
+                        className={'text-xs px-2 py-0.5 rounded-full transition ' + (selectedTag === tag ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-600')}
+                      >
+                        {'#' + tag}
+                      </button>
+                    ))}
+                    {listing.tags.length > 3 && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
+                        +{listing.tags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center">
                   <span className="text-gray-900 font-bold">
                     {getCurrencySymbol(listing.currency)}{listing.price}
                     <span className="text-gray-400 font-normal text-sm">/{listing.pricePeriod || 'day'}</span>
                   </span>
-                  <a href={`/listings/${listing.id}`} className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 text-xs font-medium transition">
+                  <a href={'/listings/' + listing.id} className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 text-xs font-medium transition">
                     View Details
                   </a>
                 </div>

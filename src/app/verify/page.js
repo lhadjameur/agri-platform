@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { Leaf, EnvelopeSimple, CheckCircle, WarningCircle, ArrowLeft } from '@phosphor-icons/react'
 
 export default function Verify() {
   const router = useRouter()
@@ -102,95 +103,115 @@ export default function Verify() {
   }
 
   return (
-    <main className="min-h-screen bg-green-50 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-2xl shadow-md w-full max-w-md">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+
+        {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-bold text-green-700">🌱 Agrivia</a>
-          {!success ? (
-            <>
-              <div className="text-5xl mt-6 mb-4">📧</div>
-              <h2 className="text-2xl font-bold text-gray-800">Check your email!</h2>
-              <p className="text-gray-500 mt-2">
-                We sent a 6-digit verification code to
-              </p>
-              <p className="text-green-600 font-semibold mt-1">{email}</p>
-            </>
-          ) : (
-            <>
-              <div className="text-5xl mt-6 mb-4">✅</div>
-              <h2 className="text-2xl font-bold text-gray-800">Email Verified!</h2>
-              <p className="text-gray-500 mt-2">Welcome to Agrivia! Redirecting to login...</p>
-            </>
-          )}
+          <a href="/" className="inline-flex items-center gap-2">
+            <Leaf size={32} weight="fill" className="text-green-600" />
+            <span className="text-2xl font-bold text-gray-900">Agrivia</span>
+          </a>
         </div>
 
-        {!success && (
-          <>
-            {error && (
-              <p className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">
-                {error}
-              </p>
-            )}
+        {/* Card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              {/* PIN Input */}
-              <div>
-                <label className="text-sm text-gray-600 mb-3 block text-center font-medium">
-                  Enter verification code
-                </label>
-                <div className="flex gap-3 justify-center">
-                  {pin.map((digit, i) => (
-                    <input
-                      key={i}
-                      ref={el => inputs.current[i] = el}
-                      type="text"
-                      maxLength={1}
-                      value={digit}
-                      onChange={e => handleChange(i, e.target.value)}
-                      onKeyDown={e => handleKeyDown(i, e)}
-                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                    />
-                  ))}
+          {!success ? (
+            <>
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <EnvelopeSimple size={32} weight="light" className="text-green-600" />
                 </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
+                <p className="text-gray-400 text-sm">
+                  We sent a 6-digit verification code to
+                </p>
+                <p className="text-gray-700 font-semibold text-sm mt-1">{email}</p>
               </div>
 
-              {/* Countdown */}
-              <div className="text-center">
-                {countdown > 0 ? (
-                  <p className="text-gray-400 text-sm">
-                    Code expires in <span className="text-green-600 font-semibold">{formatTime(countdown)}</span>
-                  </p>
-                ) : (
-                  <p className="text-red-500 text-sm">Code has expired. Please resend.</p>
-                )}
-              </div>
+              {error && (
+                <div className="flex items-center gap-2 bg-red-50 text-red-600 p-3 rounded-xl mb-5 text-sm">
+                  <WarningCircle size={16} weight="fill" />
+                  {error}
+                </div>
+              )}
 
-              <button
-                type="submit"
-                disabled={loading || countdown === 0}
-                className="bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50"
-              >
-                {loading ? 'Verifying...' : 'Verify Email'}
-              </button>
-            </form>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-            <div className="text-center mt-6">
-              <p className="text-gray-500 text-sm">
-                Didn't receive the code?{' '}
+                {/* PIN Input */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-3 block text-center">
+                    Enter verification code
+                  </label>
+                  <div className="flex gap-2 justify-center">
+                    {pin.map((digit, i) => (
+                      <input
+                        key={i}
+                        ref={el => inputs.current[i] = el}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={e => handleChange(i, e.target.value)}
+                        onKeyDown={e => handleKeyDown(i, e)}
+                        className="w-12 h-14 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Countdown */}
+                <div className="text-center">
+                  {countdown > 0 ? (
+                    <p className="text-gray-400 text-sm">
+                      Code expires in{' '}
+                      <span className="text-green-600 font-semibold">{formatTime(countdown)}</span>
+                    </p>
+                  ) : (
+                    <p className="text-red-500 text-sm">Code has expired. Please resend.</p>
+                  )}
+                </div>
+
                 <button
-                  onClick={handleResend}
-                  disabled={resending || countdown > 540}
-                  className="text-green-600 hover:underline disabled:opacity-50 disabled:no-underline font-medium"
+                  type="submit"
+                  disabled={loading || countdown === 0}
+                  className="bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 transition text-sm"
                 >
-                  {resending ? 'Sending...' : 'Resend code'}
+                  {loading ? 'Verifying...' : 'Verify Email'}
                 </button>
-              </p>
-              <a href="/register" className="text-gray-400 text-sm hover:underline mt-2 block">
-                ← Back to Register
-              </a>
+
+              </form>
+
+              {/* Footer */}
+              <div className="text-center mt-6">
+                <p className="text-gray-400 text-sm">
+                  Didn't receive the code?{' '}
+                  <button
+                    onClick={handleResend}
+                    disabled={resending || countdown > 540}
+                    className="text-green-600 hover:underline disabled:opacity-40 font-medium"
+                  >
+                    {resending ? 'Sending...' : 'Resend code'}
+                  </button>
+                </p>
+                <a href="/register" className="flex items-center justify-center gap-1 text-gray-400 text-sm hover:text-gray-600 mt-3 transition">
+                  <ArrowLeft size={14} />
+                  Back to Register
+                </a>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-4">
+              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={32} weight="fill" className="text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
+              <p className="text-gray-400 text-sm">Welcome to Agrivia! Redirecting to login...</p>
             </div>
-          </>
-        )}
+          )}
+
+        </div>
       </div>
     </main>
   )
