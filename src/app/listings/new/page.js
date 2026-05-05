@@ -83,7 +83,7 @@ export default function NewListing() {
   return (
     <main className="min-h-screen bg-green-50">
       <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold text-green-700">🌱 AgriShare</a>
+        <a href="/" className="text-2xl font-bold text-green-700">🌱 Agrivia</a>
         <a href="/listings" className="text-green-600 hover:underline">← Back to Listings</a>
       </nav>
 

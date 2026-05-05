@@ -32,7 +32,7 @@ export default function ForgotPassword() {
     <main className="min-h-screen bg-green-50 flex items-center justify-center">
       <div className="bg-white p-10 rounded-2xl shadow-md w-full max-w-md">
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-bold text-green-700">🌱 AgriShare</a>
+          <a href="/" className="text-2xl font-bold text-green-700">🌱 Agrivia</a>
           <h2 className="text-2xl font-bold text-gray-800 mt-4">Forgot Password?</h2>
           <p className="text-gray-500 mt-2">Enter your email and we'll send you a reset link</p>
         </div>

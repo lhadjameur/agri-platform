@@ -11,7 +11,7 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'agrisharesecret')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'Agriviasecret')
     const userId = decoded.userId
 
     const listings = await prisma.listing.findMany({

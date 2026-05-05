@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "AgriShare - Smarter Farming Through Sharing",
+  title: "Agrivia - Smarter Farming Through Sharing",
   description: "Connect with farmers and share agricultural resources",
 };
 

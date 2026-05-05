@@ -49,25 +49,25 @@ export async function POST(req) {
     }
 
     await resend.emails.send({
-      from: 'AgriShare <onboarding@resend.dev>',
+      from: 'Agrivia <onboarding@resend.dev>',
       to: email,
-      subject: 'Your AgriShare Verification Code',
+      subject: 'Your Agrivia Verification Code',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #15803d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0;">🌱 AgriShare</h1>
+            <h1 style="color: white; margin: 0;">🌱 Agrivia</h1>
             <p style="color: #bbf7d0; margin: 8px 0 0;">Smarter Farming Through Sharing</p>
           </div>
           <div style="background: #f9fafb; padding: 32px; border-radius: 0 0 12px 12px;">
             <h2 style="color: #1f2937;">Hello ${name}! 👋</h2>
-            <p style="color: #6b7280;">Thank you for joining AgriShare. Please use the verification code below to confirm your email address.</p>
+            <p style="color: #6b7280;">Thank you for joining Agrivia. Please use the verification code below to confirm your email address.</p>
             <div style="background: white; border: 2px dashed #15803d; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
               <p style="color: #6b7280; margin: 0 0 8px;">Your verification code is:</p>
               <h1 style="color: #15803d; font-size: 48px; letter-spacing: 8px; margin: 0;">${pin}</h1>
               <p style="color: #9ca3af; font-size: 14px; margin: 8px 0 0;">This code expires in 10 minutes</p>
             </div>
             <p style="color: #9ca3af; font-size: 14px;">If you did not create an account, please ignore this email.</p>
-            <p style="color: #9ca3af; font-size: 14px;">The AgriShare Team 🌱</p>
+            <p style="color: #9ca3af; font-size: 14px;">The Agrivia Team 🌱</p>
           </div>
         </div>
       `

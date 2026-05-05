@@ -17,7 +17,7 @@ export default function Contact() {
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
           <span className="text-3xl">🌱</span>
-         <a href="/" className="text-2xl font-bold text-green-700">AgriShare</a>
+         <a href="/" className="text-2xl font-bold text-green-700">Agrivia</a>
         </div>
         <div className="flex items-center gap-6">
           <a href="/" className="text-gray-600 hover:text-green-700 font-medium">Home</a>
@@ -49,7 +49,7 @@ export default function Contact() {
                 <div className="bg-green-100 p-4 rounded-2xl text-2xl">📧</div>
                 <div>
                   <h4 className="font-bold text-gray-800 text-lg">Email Us</h4>
-                  <p className="text-gray-500">support@agrishare.com</p>
+                  <p className="text-gray-500">support@Agrivia.com</p>
                   <p className="text-gray-400 text-sm mt-1">We reply within 24 hours</p>
                 </div>
               </div>
@@ -141,9 +141,9 @@ export default function Contact() {
       <footer className="bg-gray-900 text-gray-400 py-12 px-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <span className="text-2xl">🌱</span>
-          <span className="text-white text-xl font-bold">AgriShare</span>
+          <span className="text-white text-xl font-bold">Agrivia</span>
         </div>
-        <p className="text-sm">© 2026 AgriShare. Smarter Farming Through Sharing.</p>
+        <p className="text-sm">© 2026 Agrivia. Smarter Farming Through Sharing.</p>
       </footer>
     </main>
   )

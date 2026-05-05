@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { Leaf, MagnifyingGlass, MapPin, Plus, SquaresFour, Spinner } from '@phosphor-icons/react'
 
 export default function Listings() {
   const [listings, setListings] = useState([])
@@ -28,94 +29,135 @@ export default function Listings() {
     fetchListings()
   }, [])
 
+  const getCurrencySymbol = (currency) => {
+    if (currency === 'EUR') return '€'
+    if (currency === 'PLN') return 'zł'
+    return '$'
+  }
+
   return (
-    <main className="min-h-screen bg-green-50">
-      <nav className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
-        <a href="/" className="text-2xl font-bold text-green-700">🌱 AgriShare</a>
+    <main className="min-h-screen bg-gray-50">
+
+      {/* Navbar */}
+      <nav className="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+        <a href="/" className="flex items-center gap-2">
+          <Leaf size={26} weight="fill" className="text-green-600" />
+          <span className="text-xl font-bold text-gray-900">Agrivia</span>
+        </a>
         <div className="flex items-center gap-4">
-          <a href="/dashboard" className="text-gray-600 hover:text-green-700 font-medium">My Dashboard</a>
-          <a href="/listings/new" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            + Add Listing
+          <a href="/dashboard" className="text-gray-600 hover:text-gray-900 font-medium text-sm">My Dashboard</a>
+          <a href="/listings/new" className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 text-sm font-medium flex items-center gap-2 transition">
+            <Plus size={16} weight="bold" />
+            Add Listing
           </a>
         </div>
       </nav>
 
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <h2 className="text-3xl font-bold text-green-800 mb-8">Available Resources</h2>
 
-        <div className="bg-white rounded-2xl shadow p-6 mb-8 grid grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="🔍 Search listings..."
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 col-span-1"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          <select
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={category}
-            onChange={e => setCategory(e.target.value)}
-          >
-            <option value="">All Categories</option>
-            <option value="Equipment">Equipment</option>
-            <option value="Land">Land</option>
-            <option value="Labor">Labor</option>
-            <option value="Advisory">Advisory</option>
-          </select>
-          <input
-            type="text"
-            placeholder="📍 Filter by location..."
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={location}
-            onChange={e => setLocation(e.target.value)}
-          />
+        {/* Header */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Available Resources</h2>
+          <p className="text-gray-400 mt-2">Find and rent agricultural resources near you</p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8 flex gap-3">
+          <div className="flex-1 flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2">
+            <MagnifyingGlass size={18} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search listings..."
+              className="flex-1 focus:outline-none text-sm text-gray-700 placeholder-gray-400"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && fetchListings()}
+            />
+          </div>
+          <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2">
+            <SquaresFour size={18} className="text-gray-400" />
+            <select
+              className="focus:outline-none text-sm text-gray-700 bg-transparent"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Land">Land</option>
+              <option value="Labor">Labor</option>
+              <option value="Advisory">Advisory</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2">
+            <MapPin size={18} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Location..."
+              className="focus:outline-none text-sm text-gray-700 placeholder-gray-400 w-32"
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+            />
+          </div>
           <button
             onClick={fetchListings}
-            className="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 font-medium"
+            className="bg-green-600 text-white rounded-xl px-6 py-2 hover:bg-green-700 font-medium text-sm transition"
           >
             Search
           </button>
         </div>
 
-        {loading && <p className="text-gray-500">Loading listings...</p>}
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-24">
+            <Spinner size={32} className="text-green-600 animate-spin" />
+          </div>
+        )}
 
+        {/* Empty State */}
         {!loading && listings.length === 0 && (
           <div className="text-center py-24">
-            <p className="text-5xl mb-4">🌾</p>
-            <p className="text-xl text-gray-500 mb-6">No listings found. Try a different search!</p>
-            <a href="/listings/new" className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700">
+            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Leaf size={40} weight="light" className="text-green-400" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">No listings found</h3>
+            <p className="text-gray-400 mb-6">Try a different search or be the first to add a listing!</p>
+            <a href="/listings/new" className="bg-green-600 text-white px-8 py-3 rounded-full hover:bg-green-700 font-medium text-sm transition">
               Add First Listing
             </a>
           </div>
         )}
 
+        {/* Listings Grid */}
         <div className="grid grid-cols-3 gap-6">
           {listings.map(listing => (
-            <div key={listing.id} className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+            <div key={listing.id} className="bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
               {listing.imageUrl ? (
-                <img src={listing.imageUrl} alt={listing.title} className="w-full h-48 object-cover"/>
+                <img src={listing.imageUrl} alt={listing.title} className="w-full h-52 object-cover group-hover:scale-105 transition-all duration-300"/>
               ) : (
-                <div className="w-full h-48 bg-green-100 flex items-center justify-center text-5xl">
-                  🌾
+                <div className="w-full h-52 bg-green-50 flex items-center justify-center">
+                  <Leaf size={48} weight="light" className="text-green-300" />
                 </div>
               )}
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full">
+              <div className="p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="bg-green-50 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
                     {listing.category}
                   </span>
                   {listing.location && (
-                    <span className="text-gray-400 text-sm">📍 {listing.location}</span>
+                    <span className="text-gray-400 text-xs flex items-center gap-1">
+                      <MapPin size={12} />
+                      {listing.location}
+                    </span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mt-3 mb-2">{listing.title}</h3>
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2">{listing.description}</p>
+                <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-1">{listing.title}</h3>
+                <p className="text-gray-400 text-sm mb-4 line-clamp-2">{listing.description}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-green-700 font-bold text-lg">
-  {listing.currency === 'EUR' ? '€' : listing.currency === 'PLN' ? 'zł' : '$'}
-  {listing.price}/{listing.pricePeriod || 'day'}
-</span>
-                  <a href={`/listings/${listing.id}`} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
+                  <span className="text-gray-900 font-bold">
+                    {getCurrencySymbol(listing.currency)}{listing.price}
+                    <span className="text-gray-400 font-normal text-sm">/{listing.pricePeriod || 'day'}</span>
+                  </span>
+                  <a href={`/listings/${listing.id}`} className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 text-xs font-medium transition">
                     View Details
                   </a>
                 </div>

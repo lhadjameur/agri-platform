@@ -6,7 +6,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: '🌱 Hello! I am the AgriShare AI Assistant. I can help you with:\n\n• Finding the right agricultural resources\n• Platform guidance and support\n• Farming advice and best practices\n• Pricing recommendations\n\nHow can I help you today?'
+      content: '🌱 Hello! I am the Agrivia AI Assistant. I can help you with:\n\n• Finding the right agricultural resources\n• Platform guidance and support\n• Farming advice and best practices\n• Pricing recommendations\n\nHow can I help you today?'
     }
   ])
   const [input, setInput] = useState('')
@@ -83,7 +83,7 @@ export default function ChatBot() {
                 🌱
               </div>
               <div>
-                <p className="font-bold text-white">AgriShare Assistant</p>
+                <p className="font-bold text-white">Agrivia Assistant</p>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
                   <p className="text-green-200 text-xs">Online</p>

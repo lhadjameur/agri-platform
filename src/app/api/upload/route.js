@@ -21,7 +21,7 @@ export async function POST(req) {
 
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'agrishare' },
+        { folder: 'Agrivia' },
         (error, result) => {
           if (error) reject(error)
           else resolve(result)

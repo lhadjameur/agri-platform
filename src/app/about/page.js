@@ -5,7 +5,7 @@ export default function About() {
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
           <span className="text-3xl">🌱</span>
-          <a href="/" className="text-2xl font-bold text-green-700">AgriShare</a>
+          <a href="/" className="text-2xl font-bold text-green-700">Agrivia</a>
         </div>
         <div className="flex items-center gap-6">
           <a href="/" className="text-gray-600 hover:text-green-700 font-medium">Home</a>
@@ -23,7 +23,7 @@ export default function About() {
           <span className="bg-white bg-opacity-20 text-white px-4 py-1 rounded-full text-sm font-medium mb-6 inline-block">
             🌾 Our Story
           </span>
-          <h2 className="text-5xl font-bold mb-6 mt-4">About AgriShare</h2>
+          <h2 className="text-5xl font-bold mb-6 mt-4">About Agrivia</h2>
           <p className="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
             We are on a mission to transform agriculture by connecting farmers and enabling
             them to share resources, reduce costs, and grow together through technology.
@@ -48,7 +48,7 @@ export default function About() {
           </div>
           <div>
             <p className="text-4xl font-bold text-purple-600">100%</p>
-            <p className="text-gray-500 text-sm mt-2">Free to join AgriShare platform</p>
+            <p className="text-gray-500 text-sm mt-2">Free to join Agrivia platform</p>
           </div>
         </div>
       </section>
@@ -58,9 +58,9 @@ export default function About() {
         <div className="max-w-6xl mx-auto grid grid-cols-2 gap-16 items-center">
           <div>
             <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium">Our Mission</span>
-            <h3 className="text-4xl font-bold text-gray-900 mb-6 mt-4">Why We Built AgriShare</h3>
+            <h3 className="text-4xl font-bold text-gray-900 mb-6 mt-4">Why We Built Agrivia</h3>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              AgriShare was created to solve a real problem — agricultural resources are expensive
+              Agrivia was created to solve a real problem — agricultural resources are expensive
               and often underutilized. A tractor sits idle for months while a nearby farmer
               desperately needs one. Land goes unused while others struggle to find space to grow.
             </p>
@@ -166,9 +166,9 @@ export default function About() {
       <footer className="bg-gray-900 text-gray-400 py-12 px-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <span className="text-2xl">🌱</span>
-          <span className="text-white text-xl font-bold">AgriShare</span>
+          <span className="text-white text-xl font-bold">Agrivia</span>
         </div>
-        <p className="text-sm">© 2026 AgriShare. Smarter Farming Through Sharing.</p>
+        <p className="text-sm">© 2026 Agrivia. Smarter Farming Through Sharing.</p>
       </footer>
     </main>
   )

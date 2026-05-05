@@ -21,15 +21,15 @@ export async function POST(req) {
       `- ${l.title} (${l.category}) - $${l.price}/day${l.location ? ` in ${l.location}` : ''}`
     ).join('\n')
 
-    const systemPrompt = `You are AgriShare Assistant, a helpful AI for the AgriShare platform — a web-based platform for sharing and renting agricultural resources among farmers.
+    const systemPrompt = `You are Agrivia Assistant, a helpful AI for the Agrivia platform — a web-based platform for sharing and renting agricultural resources among farmers.
 
 Your role is to:
-1. Help users navigate and use the AgriShare platform
+1. Help users navigate and use the Agrivia platform
 2. Answer questions about agriculture, farming equipment, and best practices
 3. Provide advice on pricing, equipment selection, and resource sharing
 4. Be friendly, professional, and knowledgeable about farming
 
-About AgriShare platform:
+About Agrivia platform:
 - Farmers can list and rent equipment, land, labor and advisory services
 - Users can book resources, send messages to owners, and leave reviews
 - The platform supports multiple categories: Equipment, Land, Labor, Advisory

@@ -37,7 +37,7 @@ export default function Profile() {
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <a href="/" className="flex items-center gap-2">
           <span className="text-2xl">🌱</span>
-          <span className="text-xl font-bold text-green-700">AgriShare</span>
+          <span className="text-xl font-bold text-green-700">Agrivia</span>
         </a>
         <div className="flex items-center gap-4">
           <a href="/dashboard" className="text-gray-600 hover:text-green-700 font-medium text-sm">Dashboard</a>

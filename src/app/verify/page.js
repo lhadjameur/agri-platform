@@ -105,7 +105,7 @@ export default function Verify() {
     <main className="min-h-screen bg-green-50 flex items-center justify-center">
       <div className="bg-white p-10 rounded-2xl shadow-md w-full max-w-md">
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-bold text-green-700">🌱 AgriShare</a>
+          <a href="/" className="text-2xl font-bold text-green-700">🌱 Agrivia</a>
           {!success ? (
             <>
               <div className="text-5xl mt-6 mb-4">📧</div>
@@ -119,7 +119,7 @@ export default function Verify() {
             <>
               <div className="text-5xl mt-6 mb-4">✅</div>
               <h2 className="text-2xl font-bold text-gray-800">Email Verified!</h2>
-              <p className="text-gray-500 mt-2">Welcome to AgriShare! Redirecting to login...</p>
+              <p className="text-gray-500 mt-2">Welcome to Agrivia! Redirecting to login...</p>
             </>
           )}
         </div>

@@ -34,13 +34,13 @@ export async function POST(req) {
     const resetUrl = `http://localhost:3000/reset-password?token=${token}`
 
     await resend.emails.send({
-      from: 'AgriShare <onboarding@resend.dev>',
+      from: 'Agrivia <onboarding@resend.dev>',
       to: email,
-      subject: 'Reset Your AgriShare Password',
+      subject: 'Reset Your Agrivia Password',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #15803d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0;">🌱 AgriShare</h1>
+            <h1 style="color: white; margin: 0;">🌱 Agrivia</h1>
             <p style="color: #bbf7d0; margin: 8px 0 0;">Smarter Farming Through Sharing</p>
           </div>
           <div style="background: #f9fafb; padding: 32px; border-radius: 0 0 12px 12px;">
@@ -53,7 +53,7 @@ export async function POST(req) {
               </a>
             </div>
             <p style="color: #9ca3af; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
-            <p style="color: #9ca3af; font-size: 14px;">The AgriShare Team</p>
+            <p style="color: #9ca3af; font-size: 14px;">The Agrivia Team</p>
           </div>
         </div>
       `

@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         <div className="px-6 py-8 border-b border-green-700">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-2xl">🌱</span>
-           <a href="/" className="text-xl font-bold">AgriShare</a>
+           <a href="/" className="text-xl font-bold">Agrivia</a>
           </div>
           <p className="text-green-300 text-sm">Admin Panel</p>
         </div>

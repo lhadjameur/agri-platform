@@ -25,7 +25,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
-      process.env.JWT_SECRET || 'agrisharesecret',
+      process.env.JWT_SECRET || 'Agriviasecret',
       { expiresIn: '7d' }
     )
 
