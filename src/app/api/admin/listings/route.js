@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server'
 
 const prisma = new PrismaClient()
 
-export async function GET() {
+export async function DELETE(request, { params }) {
   try {
-    const listings = await prisma.listing.findMany({
-      include: { owner: { select: { name: true } } },
-      orderBy: { createdAt: 'desc' }
+    const id = parseInt(params.id)
+    await prisma.listing.delete({
+      where: { id }
     })
-    return NextResponse.json(listings)
+    return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
