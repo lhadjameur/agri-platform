@@ -1,9 +1,9 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Leaf, MagnifyingGlass, MapPin, Plus, SquaresFour, Spinner, Tag, X } from '@phosphor-icons/react'
 
-export default function Listings() {
+function ListingsContent() {
   const searchParams = useSearchParams()
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -250,5 +250,17 @@ export default function Listings() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function Listings() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Spinner size={32} className="text-green-600 animate-spin" />
+      </div>
+    }>
+      <ListingsContent />
+    </Suspense>
   )
 }
