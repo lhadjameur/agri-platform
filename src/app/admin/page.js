@@ -22,7 +22,7 @@ export default function AdminDashboard() {
       fetch('/api/admin/users').then(r => r.json()),
       fetch('/api/admin/listings').then(r => r.json()),
       fetch('/api/admin/stats').then(r => r.json()),
-      fetch('/api/bookings').then(r => r.json())
+      fetch('/api/admin/bookings').then(r => r.json()),
     ]).then(([usersData, listingsData, statsData, bookingsData]) => {
       setUsers(usersData)
       setListings(listingsData)
