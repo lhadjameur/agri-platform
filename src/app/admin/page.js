@@ -22,12 +22,15 @@ export default function AdminDashboard() {
       fetch('/api/admin/users').then(r => r.json()),
       fetch('/api/admin/listings').then(r => r.json()),
       fetch('/api/admin/stats').then(r => r.json()),
-      fetch('/api/admin/bookings').then(r => r.json()),
+      fetch('/api/admin/bookings').then(r => r.json())
     ]).then(([usersData, listingsData, statsData, bookingsData]) => {
-      setUsers(usersData)
-      setListings(listingsData)
-      setStats(statsData)
-      setBookings(bookingsData)
+      setUsers(Array.isArray(usersData) ? usersData : [])
+      setListings(Array.isArray(listingsData) ? listingsData : [])
+      setStats(statsData && statsData.users !== undefined ? statsData : { users: 0, listings: 0, bookings: 0, messages: 0 })
+      setBookings(Array.isArray(bookingsData) ? bookingsData : [])
+      setLoading(false)
+    }).catch(err => {
+      console.error('Admin dashboard error:', err)
       setLoading(false)
     })
   }, [])
